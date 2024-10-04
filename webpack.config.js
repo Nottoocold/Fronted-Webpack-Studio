@@ -1,5 +1,6 @@
 const path = require("path");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
+const EslintWebpackPlugin = require("eslint-webpack-plugin");
 
 module.exports = {
   mode: "development",
@@ -15,9 +16,19 @@ module.exports = {
   devServer: {
     static: "./dist",
   },
-  plugins: [new HtmlWebpackPlugin({ title: "开发环境" })], // 自动生成html文件
+  plugins: [
+    new HtmlWebpackPlugin({ title: "开发环境" }), // 自动生成html文件
+    new EslintWebpackPlugin({ configType: "flat" }), // 开启eslint检查, 版本9.0.0以上需要指定configType:flat
+  ],
   module: {
     rules: [
+      {
+        test: /\.(?:js|mjs|cjs)$/,
+        exclude: /node_modules/,
+        use: {
+          loader: "babel-loader",
+        },
+      },
       { test: /\.css/i, use: ["style-loader", "css-loader"] },
       {
         test: /\.(png|jpe?g|gif|svg|webp)$/i,
