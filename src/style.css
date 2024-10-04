@@ -1,0 +1,13 @@
+@font-face {
+    font-family: myFont;
+    src: url('./my-font.ttf') format('ttf'), url('./my-font.woff2') format('woff2');
+    font-weight: 600;
+    font-style: normal;
+}
+
+.hello {
+    font-family: myFont;
+    font-size: 20px;
+    color: #9f07ff;
+    background-image: url('./demo_pic.png');
+}
