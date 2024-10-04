@@ -8,7 +8,7 @@ function component() {
   btn.onclick = printMe;
   
   // lodash 从 npm 包中导入 join 方法
-  element.innerHTML = _.join(["Hello", "webpack"], " ");
+  element.innerHTML = _.join(["Hello", "Webpack"], "-");
   
   element.appendChild(btn);
   
