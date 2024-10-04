@@ -3,18 +3,14 @@ const HtmlWebpackPlugin = require("html-webpack-plugin");
 const EslintWebpackPlugin = require("eslint-webpack-plugin");
 
 module.exports = {
-  mode: "development",
+  mode: "production",
   entry: {
     index: "./src/index.js", // 入口文件1
   },
   output: {
-    path: path.resolve(__dirname, "dist"), // 开发环境下不输出文件，由webpack-dev-server输出
+    path: path.resolve(__dirname, "dist"), // 项目打包输出的根目录
     filename: "js/[name].bundle.js", // js文件输出路径
-  },
-  devtool: "inline-source-map", // 开启source-map 仅在开发环境下生效，生产环境下需要注释掉
-  devServer: {
-    port: '8080', // 端口号
-    open: true, // 自动打开浏览器
+    clean: true, // 每次打包前清空dist目录
   },
   plugins: [
     new HtmlWebpackPlugin(), // 自动生成html文件
