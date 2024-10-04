@@ -1,6 +1,8 @@
 const path = require("path");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const EslintWebpackPlugin = require("eslint-webpack-plugin");
+const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const CssMinimizerPlugin = require("css-minimizer-webpack-plugin");
 
 module.exports = {
   mode: "production",
@@ -15,6 +17,8 @@ module.exports = {
   plugins: [
     new HtmlWebpackPlugin(), // 自动生成html文件
     new EslintWebpackPlugin({ configType: "flat" }), // 开启eslint检查, 版本9.0.0以上需要指定configType:flat
+    new MiniCssExtractPlugin(), // 分离css文件
+    new CssMinimizerPlugin(), // 压缩css文件
   ],
   module: {
     rules: [
@@ -25,7 +29,21 @@ module.exports = {
           loader: "babel-loader",
         },
       },
-      { test: /\.css/i, use: ["style-loader", "css-loader"] },
+      {
+        test: /\.css/i,
+        use: [
+          MiniCssExtractPlugin.loader,
+          "css-loader",
+          {
+            loader: "postcss-loader",
+            options: {
+              postcssOptions: {
+                plugins: ["postcss-preset-env"],
+              },
+            },
+          },
+        ],
+      },
       {
         test: /\.(png|jpe?g|gif|svg|webp)$/i,
         type: "asset", // 处理图片资源, 对于小于4kb的图片会内联到js文件中，大于4kb的图片会单独打包成文件

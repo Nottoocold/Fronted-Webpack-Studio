@@ -13,7 +13,7 @@ module.exports = {
   },
   devtool: "inline-source-map", // 开启source-map 仅在开发环境下生效，生产环境下需要注释掉
   devServer: {
-    port: '8080', // 端口号
+    port: "8080", // 端口号
     open: true, // 自动打开浏览器
   },
   plugins: [
@@ -29,7 +29,21 @@ module.exports = {
           loader: "babel-loader",
         },
       },
-      { test: /\.css/i, use: ["style-loader", "css-loader"] },
+      {
+        test: /\.css/i,
+        use: [
+          "style-loader",
+          "css-loader",
+          {
+            loader: "postcss-loader",
+            options: {
+              postcssOptions: {
+                plugins: ["postcss-preset-env"],
+              },
+            },
+          },
+        ],
+      },
       {
         test: /\.(png|jpe?g|gif|svg|webp)$/i,
         type: "asset", // 处理图片资源, 对于小于4kb的图片会内联到js文件中，大于4kb的图片会单独打包成文件
