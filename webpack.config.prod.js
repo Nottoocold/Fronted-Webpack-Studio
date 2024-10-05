@@ -12,7 +12,7 @@ module.exports = {
   },
   output: {
     path: path.resolve(__dirname, "dist"), // 项目打包输出的根目录
-    filename: "js/[name].bundle.js", // js文件输出路径
+    filename: "js/[id].bundle.js", // js文件输出路径
     clean: true, // 每次打包前清空dist目录
   },
   resolve: {
@@ -25,7 +25,6 @@ module.exports = {
     new HtmlWebpackPlugin(), // 自动生成html文件
     new EslintWebpackPlugin({ configType: "flat" }), // 开启eslint检查, 版本9.0.0以上需要指定configType:flat
     new MiniCssExtractPlugin(), // 分离css文件
-    new CssMinimizerPlugin(), // 压缩css文件
   ],
   module: {
     rules: [
@@ -63,5 +62,10 @@ module.exports = {
         generator: { filename: "img/[hash:10][ext][query]" },
       },
     ],
+  },
+  optimization: {
+    chunkIds: 'deterministic',
+    runtimeChunk: true,
+    minimizer: [new CssMinimizerPlugin(), "..."],
   },
 };
