@@ -92,4 +92,10 @@ module.exports = {
       },
     ],
   },
+  optimization: {
+    runtimeChunk: "single", // 创建一个在所有生成 chunk 之间共享的运行时文件
+    splitChunks: {
+      chunks: "all", // 启用分割代码块，其余配置项参考官方文档
+    },
+  },
 };

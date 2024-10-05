@@ -9,10 +9,12 @@ module.exports = {
   mode: "production",
   entry: {
     app: "./src/index.js", // 入口文件
+    // main: './src/pages/index.js',
+    util: "./src/js/print.js",
   },
   output: {
     path: path.resolve(__dirname, "dist"), // 项目打包输出的根目录
-    filename: "js/[id].bundle.js", // js文件输出路径
+    filename: "js/[name].bundle.js", // js文件输出路径
     clean: true, // 每次打包前清空dist目录
   },
   resolve: {
@@ -24,7 +26,7 @@ module.exports = {
   plugins: [
     new HtmlWebpackPlugin(), // 自动生成html文件
     new EslintWebpackPlugin({ configType: "flat" }), // 开启eslint检查, 版本9.0.0以上需要指定configType:flat
-    new MiniCssExtractPlugin(), // 分离css文件
+    new MiniCssExtractPlugin({ filename: "css/[name].css" }), // 分离css文件
   ],
   module: {
     rules: [
@@ -64,8 +66,10 @@ module.exports = {
     ],
   },
   optimization: {
-    chunkIds: 'deterministic',
-    runtimeChunk: true,
+    runtimeChunk: "single", // 创建一个在所有生成 chunk 之间共享的运行时文件
+    splitChunks: {
+      chunks: "all", // 启用分割代码块，其余配置项参考官方文档
+    },
     minimizer: [new CssMinimizerPlugin(), "..."],
   },
 };

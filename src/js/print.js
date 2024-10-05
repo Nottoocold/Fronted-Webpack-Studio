@@ -1,4 +1,9 @@
+import _ from "lodash";
+
 export default function printMe() {
-    console.log('I get called from print.js!');
-    // conssole.log('I get called from print.js!'); // 测试开发环境webpack的source map功能
+  console.log("I get called from print.js!");
+}
+
+export function joinPrint(...args) {
+  return _.join(args, " ");
 }
