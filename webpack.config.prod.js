@@ -10,7 +10,7 @@ module.exports = {
   entry: {
     app: "./src/index.js", // 入口文件
     // main: './src/pages/index.js',
-    util: "./src/js/print.js",
+    // util: "./src/js/print.js",
   },
   output: {
     path: path.resolve(__dirname, "dist"), // 项目打包输出的根目录
@@ -68,7 +68,7 @@ module.exports = {
   optimization: {
     runtimeChunk: "single", // 创建一个在所有生成 chunk 之间共享的运行时文件
     splitChunks: {
-      chunks: "all", // 启用分割代码块，其余配置项参考官方文档
+      chunks: "all", // 启用分割代码块，其余配置项参考官方文档...默认行为：1.将node_modules中的模块打包到单独的bundle中 2.将动态导入的模块打包到单独的bundle中
     },
     minimizer: [new CssMinimizerPlugin(), "..."],
   },
