@@ -1,17 +1,16 @@
-# Webpack
+# Webpack5.x
 
-## 概念
+## 一、基础(核心)概念
 
 本质上，webpack 是一个用于现代 JavaScript 应用程序的 静态模块打包工具。当 webpack 处理应用程序时，它会在内部从一个或多个入口点构建一个 依赖图(dependency graph)，然后将你项目中所需的每一个模块组合成一个或多个 bundles，它们均为静态资源，用于展示你的内容。
 
-> ### 注意
-> 
+> **注意**
 > webpack本身仅仅只能处理 JavaScript的模块化语法，所以如果使用ES6+的语法，需要使用对应的loader进行转换。
 
 - 针对语法兼容性问题，使用babel处理
 - 针对代码风格统一一致问题，使用eslint处理
 
-### 入口(entry)
+### 1.1 入口(entry)
 
 入口起点(entry point)指示 webpack 应该使用哪个模块，来作为构建其内部 依赖图(dependency graph) 的开始。进入入口起点后，webpack 会找出有哪些模块和库是入口起点（直接和间接）依赖的。  
 
@@ -25,7 +24,7 @@ module.exports = {
 };
 ```
 
-## 输出(output)
+### 1.2 输出(output)
 
 **output** 属性告诉 webpack 在哪里输出它所创建的 *bundle*，以及如何命名这些文件。主要输出文件的默认值是 `./dist/main.js`，其他生成文件默认放置在 `./dist` 文件夹中。
 
@@ -45,12 +44,11 @@ module.exports = {
 };
 ```
 
-## loader
+### 1.3 loader
 
 webpack 只能理解 JavaScript 和 JSON 文件，这是 webpack 开箱可用的自带能力。**loader** 让 webpack 能够去处理其他类型的文件，并将它们转换为有效 [模块](https://www.webpackjs.com/concepts/modules)，以供应用程序使用，以及被添加到依赖图中。
 
-> ###### 警告
-> 
+> **警告**
 > webpack 的其中一个强大的特性就是能通过 `import` 导入任何类型的模块（例如 `.css` 文件），其他打包程序或任务执行器的可能并不支持。我们认为这种语言扩展是很有必要的，因为这可以使开发人员创建出更准确的依赖关系图。
 
 在更高层面，在 webpack 的配置中，**loader** 有两个属性：
@@ -78,7 +76,7 @@ module.exports = {
 
 > “嘿，webpack 编译器，当你碰到「在 `require()`/`import` 语句中被解析为 '.txt' 的路径」时，在你对它打包之前，先 **use(使用)** `raw-loader` 转换一下。”
 
-## 插件(plugin)
+### 1.4 插件(plugin)
 
 loader 用于转换某些类型的模块，而插件则可以用于执行范围更广的任务。包括：打包优化，资源管理，注入环境变量。
 
@@ -100,11 +98,10 @@ module.exports = {
 
 在上面的示例中，`html-webpack-plugin` 为应用程序生成一个 HTML 文件，并自动将生成的所有 bundle 注入到此文件中。
 
-> ### 提示
-> 
+>**提示** 
 > webpack提供了许多开箱即用的插件。查阅 [插件列表](https://www.webpackjs.com/plugins) 获取更多。
 
-## 模式(mode)
+### 1.5 模式(mode)
 
 通过选择 `development`, `production` 或 `none` 之中的一个，来设置 `mode` 参数，你可以启用 webpack 内置在相应环境下的优化。其默认值为 `production`。
 
