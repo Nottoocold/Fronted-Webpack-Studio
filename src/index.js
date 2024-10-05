@@ -1,12 +1,12 @@
-import home from '@/pages/index.js';
+import Home from '@/pages/index.js';
 import "./index.css";
 import _ from 'lodash';
 
 function component() {
-  const element = document.createElement("div");
+  const element = document.getElementById("root");
   element.classList.add("root");
   element.innerHTML = _.join(["Hello", "webpack"], " ");
-  home(element);
+  Home(element);
   return element;
 }
 

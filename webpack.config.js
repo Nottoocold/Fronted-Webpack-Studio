@@ -12,8 +12,10 @@ module.exports = {
   },
   // 2. 输出配置
   output: {
-    path: path.resolve(__dirname, "dist"), // 开发环境下不输出文件，由webpack-dev-server输出
-    filename: "js/[name].bundle.js", // js文件输出路径
+    path: undefined, // 开发环境下不输出文件，由webpack-dev-server输出
+    filename: "js/[name].[contenthash:10].bundle.js", // 入口文件输出路径
+    chunkFilename: "js/chunks/[name].[chunkhash:10].chunk.js", // 非入口文件输出路径
+    assetModuleFilename: "assets/[contenthash:10][ext][query]", // 处理资源文件路径
   },
   // 3. 模块解析配置
   resolve: {
@@ -49,9 +51,15 @@ module.exports = {
   },
   // 6. 插件配置
   plugins: [
-    new HtmlWebpackPlugin(), // 自动生成html文件
+    new HtmlWebpackPlugin({
+      template: path.resolve(__dirname, "public/index.html"),
+    }), // 自动生成html文件
     new EslintWebpackPlugin({ configType: "flat" }), // 开启eslint检查, 版本9.0.0以上需要指定configType:flat
-    new MiniCssExtractPlugin(), // 分离css文件
+    // 分离css文件
+    new MiniCssExtractPlugin({
+      filename: "css/[name].[contenthash:10].css",
+      chunkFilename: "css/[name].[chunkhash:10].chunk.css",
+    }),
   ],
   // 7. 模块配置
   module: {
@@ -81,13 +89,13 @@ module.exports = {
       {
         test: /\.(png|jpe?g|gif|svg|webp)$/i,
         type: "asset", // 处理图片资源, 对于小于4kb的图片会内联到js文件中，大于4kb的图片会单独打包成文件
-        generator: { filename: "img/[hash:10][ext][query]" },
+        // generator: { filename: "img/[hash:10][ext][query]" },
         parser: { dataUrlCondition: { maxSize: 4 * 1024 } },
       },
       {
         test: /\.(ttf|woff2?|mp3|mp4|avi)$/i,
         type: "asset/resource", // 处理其他资源 如字体文件
-        generator: { filename: "img/[hash:10][ext][query]" },
+        // generator: { filename: "img/[hash:10][ext][query]" },
       },
     ],
   },

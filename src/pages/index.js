@@ -10,7 +10,7 @@ function Home(container) {
   const button = document.createElement("button");
   button.textContent = "Click me to print";
   button.onclick = () => {
-    import("@/utils/dateUtils")
+    import(/* webpackChunkName: "dateUtils" */ "@/utils/dateUtils")
       .then(({formatDateWithRelativeTime}) => {
         console.log(formatDateWithRelativeTime(new Date(2024, 9, 3)));
       })
