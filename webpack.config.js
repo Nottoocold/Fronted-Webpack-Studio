@@ -31,7 +31,6 @@ module.exports = {
     hot: true, // 开启热更新
     client: {
       logging: "info", // 日志级别
-      progress: true, // 浏览器显示进度条
       reconnect: 32, // 自动重连
       overlay: {
         errors: true, // 显示编译错误信息
