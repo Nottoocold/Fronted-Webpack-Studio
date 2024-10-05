@@ -1,25 +1,60 @@
 const path = require("path");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const EslintWebpackPlugin = require("eslint-webpack-plugin");
+const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 
 module.exports = {
-  mode: "development",
+  context: path.resolve(__dirname), // 项目根目录
+  mode: "development", // 开发环境
+  // 1. 入口配置
   entry: {
-    index: "./src/index.js", // 入口文件1
+    app: "./src/index.js", // 入口文件
   },
+  // 2. 输出配置
   output: {
     path: path.resolve(__dirname, "dist"), // 开发环境下不输出文件，由webpack-dev-server输出
     filename: "js/[name].bundle.js", // js文件输出路径
   },
-  devtool: "inline-source-map", // 开启source-map 仅在开发环境下生效，生产环境下需要注释掉
-  devServer: {
-    port: "8080", // 端口号
-    open: true, // 自动打开浏览器
+  // 3. 模块解析配置
+  resolve: {
+    alias: {
+      "@": path.resolve(__dirname, "src"), // 别名配置
+    },
   },
+  // 4. 开发工具配置
+  devtool: "eval-cheap-module-source-map", // 开启source-map 方便调试
+  // 5. 开发服务器，自动化配置
+  devServer: {
+    port: "9000", // 端口号
+    open: true, // 自动打开浏览器
+    compress: true, // 压缩传输数据
+    hot: true, // 开启热更新
+    client: {
+      logging: "info", // 日志级别
+      progress: true, // 浏览器显示进度条
+      reconnect: 32, // 自动重连
+      overlay: {
+        errors: true, // 显示编译错误信息
+        warnings: false, // 显示编译警告信息
+        runtimeErrors: true, // 显示运行时错误信息
+      },
+    },
+    proxy: [
+      // 代理配置
+      {
+        context: ["/api"], // 以/api开头的请求，代理至target --> your backend api url,e.g. /api/user => http://localhost:8080/api/user
+        target: "http://localhost:8080",
+        changeOrigin: true,
+      },
+    ],
+  },
+  // 6. 插件配置
   plugins: [
     new HtmlWebpackPlugin(), // 自动生成html文件
     new EslintWebpackPlugin({ configType: "flat" }), // 开启eslint检查, 版本9.0.0以上需要指定configType:flat
+    new MiniCssExtractPlugin(), // 分离css文件
   ],
+  // 7. 模块配置
   module: {
     rules: [
       {
@@ -32,7 +67,7 @@ module.exports = {
       {
         test: /\.css/i,
         use: [
-          "style-loader",
+          MiniCssExtractPlugin.loader,
           "css-loader",
           {
             loader: "postcss-loader",

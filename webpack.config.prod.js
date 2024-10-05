@@ -5,15 +5,22 @@ const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const CssMinimizerPlugin = require("css-minimizer-webpack-plugin");
 
 module.exports = {
+  context: path.resolve(__dirname), // 项目根目录
   mode: "production",
   entry: {
-    index: "./src/index.js", // 入口文件1
+    app: "./src/index.js", // 入口文件
   },
   output: {
     path: path.resolve(__dirname, "dist"), // 项目打包输出的根目录
     filename: "js/[name].bundle.js", // js文件输出路径
     clean: true, // 每次打包前清空dist目录
   },
+  resolve: {
+    alias: {
+      "@": path.resolve(__dirname, "src"), // 别名配置
+    },
+  },
+  devtool: "source-map",
   plugins: [
     new HtmlWebpackPlugin(), // 自动生成html文件
     new EslintWebpackPlugin({ configType: "flat" }), // 开启eslint检查, 版本9.0.0以上需要指定configType:flat

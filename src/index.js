@@ -1,4 +1,4 @@
-import home from "./pages/index.js";
+import home from '@/pages/index.js';
 import "./index.css";
 
 function component() {
