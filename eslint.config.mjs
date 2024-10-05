@@ -1,39 +1,24 @@
 import globals from "globals";
-import pluginJs from "@eslint/js";
-
-const recommendedRules = {
-  name: "eslint-config-recommended",
-  ...pluginJs.configs.recommended,
-};
+//import pluginJs from "@eslint/js";
+import react from "eslint-plugin-react";
 
 export default [
   {
     ignores: ["dist/*", "build/*"],
   },
+  react.configs.flat.recommended, // This is not a plugin object, but a shareable config object
+  react.configs.flat["jsx-runtime"], // Add this if you are using React 17+
   {
-    languageOptions: {
-      globals: globals.browser, // add browser global variables to the environment
-      parserOptions: {
-        sourceType: "module", // es module
-        // ecmaFeatures: {
-        //   jsx: true, // enable JSX syntax in ESLint when using React plugin
-        // },
+    settings: {
+      react: {
+        version: "detect",
       },
     },
-  },
-  recommendedRules,
-  {
-    name: "custom",
-    rules: {
-      "no-undef": "off",
-      "no-unused-vars": "warn",
-    },
-  },
-  {
-    name: "override",
-    rules: {
-      "no-unused-vars": "error", // override the above rule
-      "no-var": "error", //
+    languageOptions: {
+      globals: {
+        ...globals.serviceworker,
+        ...globals.browser,
+      },
     },
   },
 ];
