@@ -15,7 +15,7 @@ module.exports = {
   output: {
     path: path.resolve(__dirname, "dist"), // 项目打包输出的根目录
     filename: "js/[name].[contenthash:10].bundle.js", // 入口文件输出路径
-    chunkFilename: "js/chunks/[name].[chunkhash:10].chunk.js", // 非入口文件输出路径
+    chunkFilename: "js/chunks/[name].[contenthash:10].chunk.js", // 非入口文件输出路径
     assetModuleFilename: "assets/[contenthash:10][ext][query]", // 处理资源文件路径
     clean: true, // 每次打包前清空dist目录
   },
@@ -34,7 +34,7 @@ module.exports = {
     // 分离css文件
     new MiniCssExtractPlugin({
       filename: "css/[name].[contenthash:10].css",
-      chunkFilename: "css/[name].[chunkhash:10].chunk.css",
+      chunkFilename: "css/[name].[contenthash:10].chunk.css",
     }),
   ],
   module: {
@@ -75,7 +75,10 @@ module.exports = {
     ],
   },
   optimization: {
-    runtimeChunk: "single", // 创建一个在所有生成 chunk 之间共享的运行时文件
+    // 创建一个在所有生成 chunk 之间共享的运行时文件
+    runtimeChunk: {
+      name: (entrypoint) => `runtime~${entrypoint.name}.js`,
+    },
     splitChunks: {
       chunks: "all", // 启用分割代码块，其余配置项参考官方文档...默认行为：1.将node_modules中的模块打包到单独的bundle中 2.将动态导入的模块打包到单独的bundle中
     },

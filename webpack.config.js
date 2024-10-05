@@ -14,7 +14,7 @@ module.exports = {
   output: {
     path: undefined, // 开发环境下不输出文件，由webpack-dev-server输出
     filename: "js/[name].[contenthash:10].bundle.js", // 入口文件输出路径
-    chunkFilename: "js/chunks/[name].[chunkhash:10].chunk.js", // 非入口文件输出路径
+    chunkFilename: "js/chunks/[name].[contenthash:10].chunk.js", // 非入口文件输出路径
     assetModuleFilename: "assets/[contenthash:10][ext][query]", // 处理资源文件路径
   },
   // 3. 模块解析配置
@@ -58,7 +58,7 @@ module.exports = {
     // 分离css文件
     new MiniCssExtractPlugin({
       filename: "css/[name].[contenthash:10].css",
-      chunkFilename: "css/[name].[chunkhash:10].chunk.css",
+      chunkFilename: "css/[name].[contenthash:10].chunk.css",
     }),
   ],
   // 7. 模块配置
@@ -100,7 +100,10 @@ module.exports = {
     ],
   },
   optimization: {
-    runtimeChunk: "single", // 创建一个在所有生成 chunk 之间共享的运行时文件
+    // 创建一个在所有生成 chunk 之间共享的运行时文件
+    runtimeChunk: {
+      name: (entrypoint) => `runtime~${entrypoint.name}`,
+    },
     splitChunks: {
       chunks: "all", // 启用分割代码块，其余配置项参考官方文档
     },
