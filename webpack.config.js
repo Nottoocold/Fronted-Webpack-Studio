@@ -67,6 +67,7 @@ module.exports = {
       ? "js/chunks/[name].[contenthash:10].chunk.js"
       : "js/chunks/[name].chunk.js", // 非入口文件输出路径
     assetModuleFilename: "assets/[contenthash:10][ext][query]", // 处理资源文件路径
+    clean: true, // 打包前清空输出目录
   },
   // 3. 模块解析配置
   resolve: {
@@ -157,8 +158,31 @@ module.exports = {
     },
     splitChunks: {
       chunks: "all", // 启用分割代码块，其余配置项参考官方文档
+      cacheGroups: {
+        react: {
+          test: /[\\/]node_modules[\\/](react|react-dom)[\\/]/,
+          name: "react",
+          priority: 40,
+        },
+        antd: {
+          test: /[\\/]node_modules[\\/]antd|[\\/]/,
+          name: "antd",
+          priority: 30,
+        },
+        vendors: {
+          test: /[\\/]node_modules[\\/]/,
+          name: "vendors",
+          priority: 20,
+        },
+        default: {
+          minChunks: 2,
+          priority: 10,
+          reuseExistingChunk: true,
+        },
+      },
     },
     minimize: isProduction, // 压缩代码
     minimizer: [new CssMinimizerPlugin(), "..."],
   },
+  performance: false, // 关闭性能提示
 };
