@@ -3,6 +3,22 @@ const HtmlWebpackPlugin = require("html-webpack-plugin");
 const EslintWebpackPlugin = require("eslint-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 
+const getStyleLoaders = (preLoader) => {
+  return [
+    MiniCssExtractPlugin.loader,
+    "css-loader",
+    {
+      loader: "postcss-loader",
+      options: {
+        postcssOptions: {
+          plugins: ["postcss-preset-env"],
+        },
+      },
+    },
+    preLoader,
+  ].filter(Boolean);
+}
+
 module.exports = {
   context: path.resolve(__dirname), // 项目根目录
   mode: "development", // 开发环境
@@ -22,6 +38,7 @@ module.exports = {
     alias: {
       "@": path.resolve(__dirname, "src"), // 别名配置
     },
+    extensions: [".js", ".json", ".jsx", ".ts", ".tsx"], // 解析文件扩展名
   },
   // 4. 开发工具配置
   devtool: "eval-cheap-module-source-map", // 开启source-map 方便调试
@@ -65,35 +82,29 @@ module.exports = {
   module: {
     rules: [
       {
-        test: /\.(?:js|mjs|cjs)$/,
+        test: /\.(?:jsx?|mjs|cjs)$/,
         exclude: /node_modules/,
         use: {
           loader: "babel-loader",
           options: {
             cacheDirectory: true,
+            cacheCompression: false,
           }
         },
       },
       {
         test: /\.css/i,
-        use: [
-          MiniCssExtractPlugin.loader,
-          "css-loader",
-          {
-            loader: "postcss-loader",
-            options: {
-              postcssOptions: {
-                plugins: ["postcss-preset-env"],
-              },
-            },
-          },
-        ],
+        use: getStyleLoaders(),
+      },
+      {
+        test: /\.less/i,
+        use: getStyleLoaders("less-loader"),
       },
       {
         test: /\.(png|jpe?g|gif|svg|webp)$/i,
-        type: "asset", // 处理图片资源, 对于小于4kb的图片会内联到js文件中，大于4kb的图片会单独打包成文件
+        type: "asset", // 处理图片资源, 对于小于10kb的图片会内联到js文件中，大于4kb的图片会单独打包成文件
         // generator: { filename: "img/[hash:10][ext][query]" },
-        parser: { dataUrlCondition: { maxSize: 4 * 1024 } },
+        parser: { dataUrlCondition: { maxSize: 10 * 1024 } },
       },
       {
         test: /\.(ttf|woff2?|mp3|mp4|avi)$/i,
