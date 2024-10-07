@@ -3,6 +3,7 @@ const HtmlWebpackPlugin = require("html-webpack-plugin");
 const EslintWebpackPlugin = require("eslint-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const CssMinimizerPlugin = require("css-minimizer-webpack-plugin");
+const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
 
 const isProduction = process.env.NODE_ENV === "production";
 
@@ -86,7 +87,8 @@ module.exports = {
       filename: "css/[name].[contenthash:10].css",
       chunkFilename: "css/[name].[contenthash:10].chunk.css",
     }),
-  ],
+    !isProduction && new ReactRefreshWebpackPlugin(), // 开启react-refresh热更新
+  ].filter(Boolean),
   // 7. 模块配置
   module: {
     rules: [
@@ -98,6 +100,7 @@ module.exports = {
           options: {
             cacheDirectory: true,
             cacheCompression: false,
+            plugins: [!isProduction && require.resolve('react-refresh/babel')].filter(Boolean),
           },
         },
       },
