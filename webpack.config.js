@@ -3,7 +3,8 @@ const HtmlWebpackPlugin = require("html-webpack-plugin");
 const EslintWebpackPlugin = require("eslint-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const CssMinimizerPlugin = require("css-minimizer-webpack-plugin");
-const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
+const ReactRefreshWebpackPlugin = require("@pmmmwh/react-refresh-webpack-plugin");
+const CopyPlugin = require("copy-webpack-plugin");
 
 const isProduction = process.env.NODE_ENV === "production";
 
@@ -24,6 +25,30 @@ const getStyleLoaders = (preLoader) => {
 };
 
 const outPath = isProduction ? path.resolve(__dirname, "dist") : undefined;
+
+const devServer = {
+  port: "9000", // 端口号
+  open: true, // 自动打开浏览器
+  compress: true, // 压缩传输数据
+  hot: true, // 开启热更新
+  client: {
+    logging: "info", // 日志级别
+    reconnect: 32, // 自动重连
+    overlay: {
+      errors: true, // 显示编译错误信息
+      warnings: false, // 显示编译警告信息
+      runtimeErrors: true, // 显示运行时错误信息
+    },
+  },
+  proxy: [
+    // 代理配置
+    {
+      context: ["/api"], // 以/api开头的请求，代理至target --> your backend api url,e.g. /api/user => http://localhost:8080/api/user
+      target: "http://localhost:8080",
+      changeOrigin: true,
+    },
+  ],
+};
 
 module.exports = {
   context: path.resolve(__dirname), // 项目根目录
@@ -53,29 +78,7 @@ module.exports = {
   // 4. 开发工具配置
   devtool: isProduction ? "source-map" : "eval-cheap-module-source-map", // 开启source-map 方便调试
   // 5. 开发服务器，自动化配置
-  devServer: {
-    port: "9000", // 端口号
-    open: true, // 自动打开浏览器
-    compress: true, // 压缩传输数据
-    hot: true, // 开启热更新
-    client: {
-      logging: "info", // 日志级别
-      reconnect: 32, // 自动重连
-      overlay: {
-        errors: true, // 显示编译错误信息
-        warnings: false, // 显示编译警告信息
-        runtimeErrors: true, // 显示运行时错误信息
-      },
-    },
-    proxy: [
-      // 代理配置
-      {
-        context: ["/api"], // 以/api开头的请求，代理至target --> your backend api url,e.g. /api/user => http://localhost:8080/api/user
-        target: "http://localhost:8080",
-        changeOrigin: true,
-      },
-    ],
-  },
+  devServer: devServer,
   // 6. 插件配置
   plugins: [
     new HtmlWebpackPlugin({
@@ -83,11 +86,31 @@ module.exports = {
     }), // 自动生成html文件
     new EslintWebpackPlugin({ configType: "flat" }), // 开启eslint检查, 版本9.0.0以上需要指定configType:flat
     // 分离css文件
-    new MiniCssExtractPlugin({
-      filename: "css/[name].[contenthash:10].css",
-      chunkFilename: "css/[name].[contenthash:10].chunk.css",
-    }),
+    isProduction &&
+      new MiniCssExtractPlugin({
+        filename: "css/[name].[contenthash:10].css",
+        chunkFilename: "css/[name].[contenthash:10].chunk.css",
+      }),
     !isProduction && new ReactRefreshWebpackPlugin(), // 开启react-refresh热更新
+    // 复制静态资源文件
+    isProduction &&
+      new CopyPlugin({
+        patterns: [
+          {
+            from: path.resolve(__dirname, "public"),
+            to: outPath,
+            toType: "dir",
+            noErrorOnMissing: true,
+            globOptions: {
+              ignore: ["**/index.html"],
+            },
+            info: {
+              // 跳过terser压缩js文件
+              minimized: true,
+            },
+          },
+        ],
+      }),
   ].filter(Boolean),
   // 7. 模块配置
   module: {
@@ -100,7 +123,9 @@ module.exports = {
           options: {
             cacheDirectory: true,
             cacheCompression: false,
-            plugins: [!isProduction && require.resolve('react-refresh/babel')].filter(Boolean),
+            plugins: [
+              !isProduction && require.resolve("react-refresh/babel"),
+            ].filter(Boolean),
           },
         },
       },
@@ -133,6 +158,7 @@ module.exports = {
     splitChunks: {
       chunks: "all", // 启用分割代码块，其余配置项参考官方文档
     },
-    minimizer: isProduction ? [new CssMinimizerPlugin(), "..."] : ["..."],
+    minimize: isProduction, // 压缩代码
+    minimizer: [new CssMinimizerPlugin(), "..."],
   },
 };
