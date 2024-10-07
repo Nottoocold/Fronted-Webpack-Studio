@@ -2,10 +2,13 @@ const path = require("path");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const EslintWebpackPlugin = require("eslint-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const CssMinimizerPlugin = require("css-minimizer-webpack-plugin");
+
+const isProduction = process.env.NODE_ENV === "production";
 
 const getStyleLoaders = (preLoader) => {
   return [
-    MiniCssExtractPlugin.loader,
+    isProduction ? MiniCssExtractPlugin.loader : "style-loader",
     "css-loader",
     {
       loader: "postcss-loader",
@@ -17,20 +20,26 @@ const getStyleLoaders = (preLoader) => {
     },
     preLoader,
   ].filter(Boolean);
-}
+};
+
+const outPath = isProduction ? path.resolve(__dirname, "dist") : undefined;
 
 module.exports = {
   context: path.resolve(__dirname), // 项目根目录
-  mode: "development", // 开发环境
+  mode: isProduction ? "production" : "development", // 环境
   // 1. 入口配置
   entry: {
     app: "./src/index.js", // 入口文件
   },
   // 2. 输出配置
   output: {
-    path: undefined, // 开发环境下不输出文件，由webpack-dev-server输出
-    filename: "js/[name].[contenthash:10].bundle.js", // 入口文件输出路径
-    chunkFilename: "js/chunks/[name].[contenthash:10].chunk.js", // 非入口文件输出路径
+    path: outPath, // 开发环境下不输出文件，由webpack-dev-server输出
+    filename: isProduction
+      ? "js/[name].[contenthash:10].bundle.js"
+      : "js/[name].bundle.js", // 入口文件输出路径
+    chunkFilename: isProduction
+      ? "js/chunks/[name].[contenthash:10].chunk.js"
+      : "js/chunks/[name].chunk.js", // 非入口文件输出路径
     assetModuleFilename: "assets/[contenthash:10][ext][query]", // 处理资源文件路径
   },
   // 3. 模块解析配置
@@ -41,7 +50,7 @@ module.exports = {
     extensions: [".js", ".json", ".jsx", ".ts", ".tsx"], // 解析文件扩展名
   },
   // 4. 开发工具配置
-  devtool: "eval-cheap-module-source-map", // 开启source-map 方便调试
+  devtool: isProduction ? "source-map" : "eval-cheap-module-source-map", // 开启source-map 方便调试
   // 5. 开发服务器，自动化配置
   devServer: {
     port: "9000", // 端口号
@@ -89,7 +98,7 @@ module.exports = {
           options: {
             cacheDirectory: true,
             cacheCompression: false,
-          }
+          },
         },
       },
       {
@@ -121,5 +130,6 @@ module.exports = {
     splitChunks: {
       chunks: "all", // 启用分割代码块，其余配置项参考官方文档
     },
+    minimizer: isProduction ? [new CssMinimizerPlugin(), "..."] : ["..."],
   },
 };

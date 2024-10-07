@@ -7,7 +7,7 @@
     "start": "npm run dev",
     "watch": "webpack build --config webpack.config.js --watch",
     "dev": "cross-env NODE_ENV=development webpack serve --config webpack.config.js --color --progress",
-    "build": "cross-env NODE_ENV=production webpack build --config webpack.config.prod.js --color --progress"
+    "build": "cross-env NODE_ENV=production webpack build --config webpack.config.js --color --progress"
   },
   "keywords": [],
   "author": "",
