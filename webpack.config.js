@@ -31,6 +31,7 @@ const devServer = {
   open: true, // 自动打开浏览器
   compress: true, // 压缩传输数据
   hot: true, // 开启热更新
+  historyApiFallback: true, // 解决刷新404问题
   client: {
     logging: "info", // 日志级别
     reconnect: 32, // 自动重连
@@ -60,6 +61,7 @@ module.exports = {
   // 2. 输出配置
   output: {
     path: outPath, // 开发环境下不输出文件，由webpack-dev-server输出
+    publicPath: "/", // 所有资源的公共路径
     filename: isProduction
       ? "js/[name].[contenthash:10].bundle.js"
       : "js/[name].bundle.js", // 入口文件输出路径
@@ -74,7 +76,7 @@ module.exports = {
     alias: {
       "@": path.resolve(__dirname, "src"), // 别名配置
     },
-    extensions: [".js", ".json", ".jsx", ".ts", ".tsx"], // 解析文件扩展名
+    extensions: [".js",".jsx"], // 解析文件扩展名
   },
   // 4. 开发工具配置
   devtool: isProduction ? "source-map" : "eval-cheap-module-source-map", // 开启source-map 方便调试
