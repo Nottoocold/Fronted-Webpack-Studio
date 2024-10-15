@@ -4,7 +4,7 @@ import Login from "@/pages/Login";
 
 const routerConfig = [
   { path: "/", element: <Home /> },
-  { path: "/login", element: <Login /> },
+  { path: "/login/:token", element: <Login /> },
 ];
 
 const router = createBrowserRouter(routerConfig);
