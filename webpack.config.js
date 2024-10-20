@@ -132,6 +132,17 @@ module.exports = {
           },
         },
       },
+      isProduction && {
+        test: /\.(?:jsx?|mjs|cjs)$/,
+        exclude: /node_modules/,
+        use: {
+          loader: "./loaders/clean-log-loader",
+          options: {
+            cacheDirectory: false,
+            cacheCompression: false,
+          },
+        },
+      },
       {
         test: /\.css/i,
         use: getStyleLoaders(),
@@ -151,7 +162,7 @@ module.exports = {
         type: "asset/resource", // 处理其他资源 如字体文件
         // generator: { filename: "img/[hash:10][ext][query]" },
       },
-    ],
+    ].filter(Boolean),
   },
   optimization: {
     // 创建一个在所有生成 chunk 之间共享的运行时文件
